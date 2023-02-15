@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="feature.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+</head>
+<body>
+    <h1>ToDo List</h1>
+    <div>
+        <label for="search">Tìm kiếm công việc: </label>
+        <input type="text" id="search">
+        <input type="submit" value="Tìm kiếm" onclick="searchTask()">
+        <br>
+        <br>
+        <div>
+          <fieldset style="width: 20%;">
+            <legend>Lọc công việc</legend>
+            <div style="display: flex;">
+              <div>
+                <input type="radio" id="today" name="filterDate" value="today">
+                <label for="today">Hôm nay</label><br>
+
+                <input type="radio" id="tomorow" name="filterDate" value="tomorow">
+                <label for="tomorow">Ngày mai</label><br>
+
+                <input type="radio" id="sevenDay" name="filterDate" value="sevenDay">
+                <label for="sevenDay">7 ngày</label><br>
+
+                <input type="radio" id="month" name="filterDate" value="month">
+                <label for="month">1 tháng</label>
+
+              </div>
+              <div>
+                <input type="checkbox" id="learn" name="learn" />
+                <label for="learn">Learn</label>
+                <br>
+                <input type="checkbox" id="work" name="work" />
+                <label for="work">Work</label>
+                <br>
+                <input type="checkbox" id="goout" name="goout" />
+                <label for="goout">Goout</label>
+                <br>
+                <input type="checkbox" id="dochores" name="dochores" />
+                <label for="dochores">DoChores</label>
+              </div>
+            </div>
+            <input type="submit" value="Lọc" onclick="filterTask()">
+          </fieldset>
+        </div>
+        <br>
+        <br>
+        <h1>Danh sách công viêc</h1>
+        <table id="tb" class="taskTable">
+          </table>
+    </div>
+    <br>
+    <div class="inputBox">
+        <label for="name">Nhập tên người làm</label>
+        <input type="text" id="name">
+        <br>
+        <br>
+        <label for="task">Nhập tên công việc</label>
+        <input type="text" id="task">
+        <br>
+        <br>
+        <label for="date">Nhập ngày làm việc</label>
+        <input type="date" id="date">
+        <br>
+        <br>
+        <input type="submit" value="Tạo" onclick="createTask()" id="createTask">
+        <input type="submit" value="Cập nhật" onclick="editTask()" hidden id="editTask">
+        <input type="submit" value="Hủy" onclick="cnclEditTask()" hidden id="cnclEditTask">
+        <input type="text" hidden id="editID">
+    </div>
+</body>
+<script src="feature.js">
+</script>
+</html>
