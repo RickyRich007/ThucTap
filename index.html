@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="feature.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 </head>
 <body>
@@ -21,17 +21,18 @@
             <legend>Lọc công việc</legend>
             <div style="display: flex;">
               <div>
-                <input type="checkbox" id="today" name="today" onclick="uncheck(0)"/>
-                <label for="today">Hôm nay</label>
-                <br>
-                <input type="checkbox" id="tomorow" name="tomorow" onclick="uncheck(1)"/>
-                <label for="today">Ngày mai</label>
-                <br>
-                <input type="checkbox" id="sevenDay" name="sevenDay" onclick="uncheck(2)"/>
-                <label for="today">7 ngày</label>
-                <br>
-                <input type="checkbox" id="month" name="month" onclick="uncheck(3)"/>
-                <label for="today">1 tháng</label>
+                <input type="radio" id="today" name="filterDate" value="today">
+                <label for="today">Hôm nay</label><br>
+
+                <input type="radio" id="tomorow" name="filterDate" value="tomorow">
+                <label for="tomorow">Ngày mai</label><br>
+
+                <input type="radio" id="sevenDay" name="filterDate" value="sevenDay">
+                <label for="sevenDay">7 ngày</label><br>
+
+                <input type="radio" id="month" name="filterDate" value="month">
+                <label for="month">1 tháng</label>
+
               </div>
               <div>
                 <input type="checkbox" id="learn" name="learn" />
@@ -47,17 +48,17 @@
                 <label for="dochores">DoChores</label>
               </div>
             </div>
-            <input type="submit" value="Tạo" onclick="filter()">
+            <input type="submit" value="Lọc" onclick="filterTask()">
           </fieldset>
         </div>
         <br>
         <br>
         <h1>Danh sách công viêc</h1>
-        <table id="tb">
+        <table id="tb" class="taskTable">
           </table>
     </div>
     <br>
-    <div>
+    <div class="inputBox">
         <label for="name">Nhập tên người làm</label>
         <input type="text" id="name">
         <br>
@@ -70,325 +71,12 @@
         <input type="date" id="date">
         <br>
         <br>
-        <input type="submit" value="Tạo" onclick="create()">
-        <input type="submit" value="Cập nhật" onclick="edit()">
+        <input type="submit" value="Tạo" onclick="createTask()" id="createTask">
+        <input type="submit" value="Cập nhật" onclick="editTask()" hidden id="editTask">
+        <input type="submit" value="Hủy" onclick="cnclEditTask()" hidden id="cnclEditTask">
         <input type="text" hidden id="editID">
     </div>
 </body>
-<script>
-
-function init() {
-    if (!localStorage.getItem("toDoList")) {
-        let arr = [{id:1,Name:'Giau',Task:'WWork',Date:'2023-03-04'},{id:2,Name:'Anh',Task:'Work',Date:'2023-03-05'}];
-        localStorage.setItem("toDoList",JSON.stringify(arr));
-    }
-}
-init();
-
-
-
- function get() {
-  
-  let arr = JSON.parse(localStorage.getItem("toDoList"));
-  render(arr);
-}
-get();
-
-function create() {
-  let arr1 = JSON.parse(localStorage.getItem("toDoList"));
-  let name = (document.getElementById("name").value).toString();
-  let task = (document.getElementById("task").value).toString();
-  let date = (document.getElementById("date").value).toString();
-  let obj = { id:arr1.length+1, Name:name, Task:task, Date:date};
-  arr1.push(obj);
-  console.log(arr1);
-  localStorage.setItem("toDoList",JSON.stringify(arr1));
-}
-function del(id) {
-  let arr1 = JSON.parse(localStorage.getItem("toDoList"));
-  for (let i =0 ; i< arr1.length;i++)
-  {
-    if(arr1[i].id == id)
-    {
-        arr1.splice(i,1);
-        document.getElementById("tb").deleteRow(i+1);
-        i--;
-    }
-  }
-  console.log(arr1);
-  localStorage.setItem("toDoList",JSON.stringify(arr1));
-}
-
-function edit() {
-  let arr1 = JSON.parse(localStorage.getItem("toDoList"));
-  let t = document.getElementById("editID").value
-  for (let i =0 ; i< arr1.length;i++)
-  {
-    if(arr1[i].id == t)
-    {
-        let name = document.getElementById("name").value;
-        let task = document.getElementById("task").value;
-        let date = document.getElementById("date").value;
-
-        arr1[i].Name = name;
-        arr1[i].Task = task;
-        arr1[i].Date = date;
-    }
-  }
-  console.log(arr1);
-  localStorage.setItem("toDoList",JSON.stringify(arr1));
-}
-function getInf(self)
-{
-    let data = JSON.parse(self.dataset.test);
-    console.log("data",data.Date.split("/").join("-"));
-    document.getElementById("name").value = data.Name;
-    document.getElementById("task").value = data.Task;
-    document.getElementById("date").value = data.Date.split("/").join("-");
-    document.getElementById("editID").value = data.id;
-}
-function searchTask()
-{
-  let word = document.getElementById("search").value;
-  let arr1 = JSON.parse(localStorage.getItem("toDoList"));
-  let arr2 = [];
-  for(let i =0; i<arr1.length;i++)
-  {
-    console.log(arr1[i].Task.includes(word));
-    if(arr1[i].Task.includes(word))
-    {
-      arr2.push(arr1[i]);
-    }
-  }
-  console.log(arr2);
-  document.getElementById("tb").innerHTML = "";
-  let tr = [];
-  tr.push('<tr><td>STT</td>');
-  tr.push('<td>Tên</td>');
-  tr.push('<td>Công việc</td>');
-  tr.push('<td>Ngày làm</td>');
-  tr.push('<td>Sửa</td>');
-  tr.push('<td>Xóa</td></tr>');
-  for (let i =0 ; i< arr2.length;i++) {
-    let option = document.createElement("option");
-    tr.push('<tr><td id="index">'+arr2[i].id+'</td>');
-    tr.push('<td id="nameintd">'+arr2[i].Name+'</td>');
-    tr.push('<td id="taskintd">'+arr2[i].Task+'</td>');
-    tr.push('<td id="dateintd">'+arr2[i].Date+'</td>');
-    tr.push(`<td><button data-test='${JSON.stringify(arr2[i])}' onclick='getInf(this)'>Sửa</button></td>`);
-    tr.push('<td><button onclick="del('+ arr2[i].id +')">Xóa</button></td></tr>');
-  }
-  let tb = document.getElementById("tb");
-  tb.innerHTML = tr.join("");
-}
-var temp = false;
-function sortByCate(flag)
-{
-
-  if(flag==0){
-    sortTableByTD(0);
-  } 
-  else if(flag==1){
-    sortTableByTD(1);
-      }
-      else if(flag==2){
-        sortTableByTD(2);
-        }
-        else if(flag==3) {
-          sortTableByTD(3);
-        }
-}
-function sortTableByTD(tag)
-{
-  let arr1 = JSON.parse(localStorage.getItem("toDoList"));
-  if(tag ==0)
-  {
-    if(temp==true)
-    {arr1.sort((a,b) => b.id - a.id);
-      temp=false;
-    }
-    else
-    {arr1.sort((a,b) => a.id - b.id);temp=true}
-  }
-  if(tag ==1)
-  {
-    if(temp==true)
-    {arr1.sort((a,b) => b.id - a.id);
-      temp=false;
-    }
-    else
-    {arr1.sort((a,b) => a.id - b.id);temp=true}
-  }
-  if(tag ==2)
-  {
-    if(temp==true)
-    {arr1.sort((a,b) => b.id - a.id);
-      temp=false;
-    }
-    else
-    {arr1.sort((a,b) => a.id - b.id);temp=true}
-  }
-  if(tag ==3)
-  {
-    if(temp==true)
-    {arr1.sort((a,b) => b.id - a.id);
-      temp=false;
-    }
-    else
-    {arr1.sort((a,b) => a.id - b.id);temp=true}
-  }
-  render(arr1)
-}
-
-function render(arr){
-
-  let tr = [];
-  tr.push('<tr><td>STT<button onclick="sortByCate(0)" style="float:right" ><i class="fas fa-sort"></i></button></td>');
-  tr.push('<td>Tên<button onclick="sortByCate(1)" style="float:right" ><i class="fas fa-sort"></i></button></td>');
-  tr.push('<td>Công việc<button onclick="sortByCate(2)" style="float:right" ><i class="fas fa-sort"></i></button></td>');
-  tr.push('<td>Ngày làm<button onclick="sortByCate(3)" style="float:right" ><i class="fas fa-sort"></i></button></td>');
-  tr.push('<td>Sửa</td>');
-  tr.push('<td>Xóa</td></tr>');
-  for (let i =0 ; i< arr.length;i++) {
-    let option = document.createElement("option");
-    tr.push('<tr><td id="index">'+arr[i].id+'</td>');
-    tr.push('<td id="nameintd">'+arr[i].Name+'</td>');
-    tr.push('<td id="taskintd">'+arr[i].Task+'</td>');
-    tr.push('<td id="dateintd">'+arr[i].Date+'</td>');
-    tr.push(`<td><button data-test='${JSON.stringify(arr[i])}' onclick='getInf(this)'>Sửa</button></td>`);
-    tr.push('<td><button onclick="del('+ arr[i].id +')">Xóa</button></td></tr>');
-  }
-  let tb = document.getElementById("tb");
-  tb.innerHTML=""
-  tb.innerHTML = tr.join("");
-}
-function filter()
-{
-  var learn = document.getElementById("learn").checked;
-  var work = document.getElementById("work").checked;
-  var goout = document.getElementById("goout").checked;
-  var dochores = document.getElementById("dochores").checked;
-
-  var today = document.getElementById("today").checked;
-  var tomorow = document.getElementById("tomorow").checked;
-  var sevenDay = document.getElementById("sevenDay").checked;
-  var month = document.getElementById("month").checked;
-
-  let arr1 = JSON.parse(localStorage.getItem("toDoList"));
-  let arr2 = [];
-  let arr3 = [];
-  for(let i =0; i<arr1.length;i++)
-  {
-    if (learn)
-    {
-      if(arr1[i].Task=="Learn")
-      {
-        arr2.push(arr1[i]);
-      }
-    }
-    if (work)
-    {
-      if(arr1[i].Task=="Work")
-      {
-        arr2.push(arr1[i]);
-      }
-    }
-    if (goout)
-    {
-      if(arr1[i].Task=="Goout")
-      {
-        arr2.push(arr1[i]);
-      }
-    }
-    if (dochores)
-    {
-      if(arr1[i].Task=="DoChores")
-      {
-        arr2.push(arr1[i]);
-      }
-    }
-  }
-  let Today = new Date().setHours(0, 0, 0, 0);
-  for(let i =0; i<arr2.length;i++)
-  {
-    let mydate = new Date(arr2[i].Date).setHours(0, 0, 0, 0);
-    if(today)
-    {
-      if(mydate != Today)
-      {
-        arr2.splice(i,1);i--;};
-    }
-    if(tomorow)
-    {
-      console.log(Today+ 86400000);
-      console.log(mydate);
-      if((mydate) != (Today+ 86400000))
-      {arr2.splice(i,1);
-        i--;
-      } 
-    }
-    if(sevenDay)
-    {
-      if(mydate<(Today)||(Today+7*86400000)<mydate)
-      {arr2.splice(i,1);
-        i--;
-      } 
-    }
-    if(month)
-    {
-      if(mydate<(Today)||(Today+30*86400000)<mydate)
-      {arr2.splice(i,1);
-        i--;
-      } 
-    }
-  }
-
-  document.getElementById("tb").innerHTML = "";
-  let tr = [];
-  tr.push('<tr><td>STT</td>');
-  tr.push('<td>Tên</td>');
-  tr.push('<td>Công việc</td>');
-  tr.push('<td>Ngày làm</td>');
-  tr.push('<td>Sửa</td>');
-  tr.push('<td>Xóa</td></tr>');
-  for (let i =0 ; i< arr2.length;i++) {
-    let option = document.createElement("option");
-    tr.push('<tr><td id="index">'+arr2[i].id+'</td>');
-    tr.push('<td id="nameintd">'+arr2[i].Name+'</td>');
-    tr.push('<td id="taskintd">'+arr2[i].Task+'</td>');
-    tr.push('<td id="dateintd">'+arr2[i].Date+'</td>');
-    tr.push(`<td><button data-test='${JSON.stringify(arr2[i])}' onclick='getInf(this)'>Sửa</button></td>`);
-    tr.push('<td><button onclick="del('+ arr2[i].id +')">Xóa</button></td></tr>');
-  }
-  let tb = document.getElementById("tb");
-  tb.innerHTML = tr.join("");
-}
-function uncheck(id)
-{
-  if(id==0)
-  {
-    document.getElementById("tomorow").checked = false;
-    document.getElementById("sevenDay").checked = false;
-    document.getElementById("month").checked = false;
-  }
-  if(id==1)
-  {
-    document.getElementById("today").checked = false;
-    document.getElementById("sevenDay").checked = false;
-    document.getElementById("month").checked = false;
-  }
-  if(id==2)
-  {
-    document.getElementById("tomorow").checked = false;
-    document.getElementById("today").checked = false;
-    document.getElementById("month").checked = false;
-  }
-  if(id==3)
-  {
-    document.getElementById("tomorow").checked = false;
-    document.getElementById("sevenDay").checked = false;
-    document.getElementById("today").checked = false;
-  }
-}
+<script src="feature.js">
 </script>
 </html>
