@@ -1,21 +1,21 @@
 
-function init() {
+function initDefTask() {
     if (!localStorage.getItem("toDoList")) {
         let arr = [{id:1,Name:'Giau',Task:'WWork',Date:'2023-03-04'},{id:2,Name:'Anh',Task:'Work',Date:'2023-03-05'}];
         localStorage.setItem("toDoList",JSON.stringify(arr));
     }
 }
-init();
+initDefTask();
 
 // Lấy dữ liệu
- function get() {
+ function getDefTask() {
   let arr = JSON.parse(localStorage.getItem("toDoList"));
-  render(arr);
+  renderTask(arr);
 }
-get();
+getDefTask();
 
 // Hàm render task
-function render(arr){
+function renderTask(arr){
   let tr = [];
   tr.push('<tr><td>STT<button onclick="sortTableByTD(0)" style="float:right" ><i class="fas fa-sort"></i></button></td>');
   tr.push('<td>Tên<button onclick="sortTableByTD(1)" style="float:right" ><i class="fas fa-sort"></i></button></td>');
@@ -178,7 +178,7 @@ function sortTableByTD(flag){
     else
     {arr1.sort((a,b) => (new Date(a.Date) - (new Date(b.Date))));temp=true}
   }
-  render(arr1)
+  renderTask(arr1)
 }
 
 //Lọc task
@@ -243,5 +243,5 @@ function filterTask(){
       } 
     }
   }
-  render(arr2)
+  renderTask(arr2)
 }
